@@ -48,3 +48,20 @@ span {
 h3:hover {
   color: #b0b7be;
 }
+
+.Select-menu-outer,
+.Select-menu-outer div {
+  background-color: black;
+}
+
+.VirtualizedSelectOption:hover,
+.VirtualizedSelectOption:hover span {
+  background-color: #11202e;
+}
+
+#ticker-dropdown {
+  border: 1px solid white;
+  border-radius: 4px;
+  align-self: center;
+  width: 50%;
+}

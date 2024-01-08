@@ -2,33 +2,38 @@ import os
 import pandas as pd
 import dash
 from dash import dcc, html
-
-# Adicione os imports necessários para a nova biblioteca 'dash_html_components'
-#import dash_html_components as html
-#from dash.dependencies import Input, Output
 import plotly.graph_objects as go
 
 def draw(news):
-    # Caminho do arquivo combinado na pasta "data"
     merged_file_path = os.path.join('data', 'merged_data.csv')
 
-    # Verificar se o arquivo existe antes de tentar lê-lo
     if os.path.exists(merged_file_path):
-        # Ler o arquivo combinado
         df = pd.read_csv(merged_file_path)
-
-        # Obter a lista de tickers únicos
         tickers = df['ticker'].unique()
-        #external_stylesheets = ['assets/styles.css']
-        # Layout da aplicação Dash
         app = dash.Dash(__name__, external_stylesheets=['assets/style.css'])
+        my_options = [
+            {
+                "label": html.Span(
+                    [
+                        html.Span(ticker, style={'color': 'white'}),
+                    ],
+                    style={ "background-color":"black"}
+                ),
+                "value": ticker,
+                "style": {'background-color': 'black'},  
+                
+            }
+            for ticker in tickers
+        ]
+
         app.layout = html.Div([
             html.Div([
                 dcc.Dropdown(
                     id='ticker-dropdown',
-                    options=[{'label': ticker, 'value': ticker} for ticker in tickers],
-                    value=tickers[1],  # Valor padrão é o primeiro ticker
-                    multi=False    
+                    options=my_options,
+                    value=tickers[1],  
+                    multi=False,
+                    style={"color": "white", "background": "black"},
                 ),
                 dcc.Graph(id='candlestick-chart')
               ]),
@@ -38,11 +43,10 @@ def draw(news):
                 ])
         ], className="generic")
 
-        # Callback para atualizar o gráfico e as notícias com base na seleção do ticker
         @app.callback(
-            [dash.dependencies.Output('candlestick-chart', 'figure'),
-             dash.dependencies.Output('news-list', 'children')],
-            [dash.dependencies.Input('ticker-dropdown', 'value')]
+            [dash.Output('candlestick-chart', 'figure'),
+             dash.Output('news-list', 'children')],
+            [dash.Input('ticker-dropdown', 'value')]
         )
         def update_chart(selected_ticker):
             filtered_df = df[df['ticker'] == selected_ticker]
@@ -50,12 +54,16 @@ def draw(news):
                             open=filtered_df['open'], high=filtered_df['high'],
                             low=filtered_df['low'], close=filtered_df['close'])
                                 ])
-            fig.update_layout(xaxis_rangeslider_visible=False)
-
-            # Filtrar notícias com base no ticker selecionado
+            fig.update_layout(xaxis_rangeslider_visible=False,
+            margin=dict(l=0, r=0, t=16, b=0),
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            xaxis=dict(showgrid=False,tickfont=dict(color='white')),
+            yaxis=dict(showgrid=False, tickfont=dict(color='white'))
+            )
+          
             filtered_news = [item for item in news[selected_ticker]]
 
-            # Criar uma lista de elementos HTML para exibir notícias
             news_list = []
             for item in filtered_news:
                 news_item = html.Li([
@@ -71,11 +79,6 @@ def draw(news):
 
             return fig, news_list
 
-        # Iniciar o servidor Dash
         app.run_server(debug=False)
     else:
         print(f'O arquivo combinado "{merged_file_path}" não existe.')
-
-# Chamar a função para desenhar o dashboard
-# Supondo que 'news_data' seja o retorno da função 'news_scrapper'
-# draw(news_data)

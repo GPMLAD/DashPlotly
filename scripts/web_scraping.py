@@ -25,22 +25,15 @@ def news_scrapper():
                 news_title = element.select_one('h2.boxarticle-infos-title a').text
                 link = element.select_one('h2.boxarticle-infos-title a')['href']
 
-                # Adicionar dados ao dicionário
                 company_data.append({
                     'type': news_type.lstrip(),
                     'title': news_title.lstrip(),
                     'link': link
                 })
 
-            # Adicionar dados ao dicionário principal
             companies_data[ticker] = company_data
 
         else:
             print(f'Falha na solicitação para {ticker}. Código de status: {response.status_code}')
 
     return companies_data
-
-# Chamar a função
-dados_noticias = news_scrapper()
-
-# print(dados_noticias["PETR4"][0]["link"])
