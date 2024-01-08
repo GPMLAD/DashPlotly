@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+body {
+  background-color: #131516;
+  font-family: 'Lato', sans-serif;
+}
+
+.generic {
+  display: flex;
+  width: 90vw;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  margin: 0 auto;
+}
+
+.generic > div {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+
+h1 {
+  font-size: calc(1.425rem + 2.1vw);
+  text-align: center;
+}
+
+ul {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}
+
+span {
+  color: #b0b7be;
+}
+
+h3:hover {
+  color: #b0b7be;
+}
