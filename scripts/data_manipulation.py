@@ -38,33 +38,84 @@ def writeFiles():
                     writer.writerows(data)
 
 
-def update_file(data_dict):
-    data_folder = 'data'
-    
-    for ticker, values in data_dict.items():
-        file_path = os.path.join(data_folder, f'{ticker}.csv')
+import os
+import pandas as pd
 
+def update_file(new_data):
+    folder_path = 'data'
+
+    # Verificar se a pasta 'data' existe, senão, criar
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
+    for ticker, data_list in new_data.items():
+        # Construir o caminho do arquivo CSV correspondente ao ticker
+        file_path = os.path.join(folder_path, f'{ticker}.csv')
+
+        # Verificar se o arquivo já existe
         if os.path.exists(file_path):
-            existing_data = pd.read_csv(file_path)
+            # Ler o arquivo CSV existente para verificar as datas já presentes
+            with open(file_path, 'r') as file:
+                existing_data = list(csv.DictReader(file))
 
-            new_data = pd.DataFrame(values, columns=['ticker', 'date', 'open', 'high', 'low', 'close'])
-            existing_data = pd.concat([existing_data, new_data], ignore_index=True)
+            # Filtrar as datas já presentes
+            existing_dates = set(row['date'] for row in existing_data)
 
-            existing_data.to_csv(file_path, index=False)
+            # Filtrar os novos dados, mantendo apenas os mais recentes
+            filtered_new_data = [row for row in data_list if row[0] not in existing_dates]
+
+            # Se houver dados para adicionar, atualizar o arquivo CSV
+            if filtered_new_data:
+                with open(file_path, 'a', newline='') as file:
+                    writer = csv.writer(file)
+                    for row in filtered_new_data:
+                        writer.writerow([ticker] + row)
         else:
-            new_data = pd.DataFrame(values, columns=['ticker', 'date', 'open', 'high', 'low', 'close'])
-            new_data.to_csv(file_path, index=False)
-
-
+            # Se o arquivo não existir, criar um novo com os novos dados
+            with open(file_path, 'w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(['ticker', 'date', 'open', 'high', 'low', 'close'])
+                for row in data_list:
+                    writer.writerow([ticker] + row)
+            
 def merge_files():
-    data_folder = 'data'
-    output_file = os.path.join(data_folder, 'merged_data.csv')
-    merged_data = pd.DataFrame()
+    # Lista dos tickers
+    tickers = ["PETR4", "CEAB3", "WEGE3"]
 
-    for filename in os.listdir(data_folder):
-        if filename.endswith(".csv"):
-            filepath = os.path.join(data_folder, filename)
-            df = pd.read_csv(filepath)
-            merged_data = pd.concat([merged_data, df], ignore_index=True)
+    # Caminho do diretório de dados
+    data_dir = 'data'
 
-    merged_data.to_csv(output_file, index=False)
+    # Lista para armazenar DataFrames dos arquivos de cada ticker
+    dfs = []
+
+    # Loop sobre os tickers
+    for ticker in tickers:
+        # Caminho do arquivo do ticker atual
+        file_path = os.path.join(data_dir, f'{ticker}.csv')
+
+        # Verifica se o arquivo existe
+        if os.path.exists(file_path):
+            # Carrega o DataFrame do arquivo do ticker
+            df_ticker = pd.read_csv(file_path)
+
+            # Adiciona o DataFrame à lista
+            dfs.append(df_ticker)
+
+    # Verifica se há DataFrames na lista
+    if dfs:
+        # Concatena os DataFrames
+        merged_data = pd.concat(dfs, ignore_index=True)
+
+        # Caminho do arquivo merged_data.csv
+        merged_file_path = os.path.join(data_dir, 'merged_data.csv')
+
+        # Salva o DataFrame concatenado no arquivo merged_data.csv
+        merged_data.to_csv(merged_file_path, index=False)
+        print(f'Successfully merged data to {merged_file_path}')
+    else:
+        print('No data to merge.')
+
+# Chama a função merge_files
+newData = {'PETR4': [['2024-01-08', '38.38', '38.39', '37.61', '38.19']], 'CEAB3': [['2024-01-08', '7.21', '7.61', '7.19', '7.57']], 'WEGE3': [['2024-01-08', '35.86', '36.30', '35.64', '35.95']]}
+
+update_file(newData)

@@ -67,11 +67,12 @@ def stocks_scrapper():
             low_value = soup.select_one('div.minimo p').text.strip().replace(',','.')
             close_value = soup.select_one('div.value p').text.strip().replace(',','.')
 
-            company_data.append([ticker,date_value, open_value,high_value,low_value,close_value])
+            company_data.append([date_value, open_value,high_value,low_value,close_value])
 
             companies_data[ticker] = company_data
 
         else:
             print(f'Falha na solicitação para {ticker}. Código de status: {response.status_code}')
-
+    print("Ações atualizadas")
     return companies_data
+#print(stocks_scrapper())
