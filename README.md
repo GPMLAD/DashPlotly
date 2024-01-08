@@ -39,5 +39,6 @@ Vale lembrar que a InfoMoney disponibiliza publicamente os dados das cotação c
 
 ### Observações
 
-Caso os arquivos .csv sejam deletados, para gerá-los novamente, basta executar a função __writeFiles__ uma vez. Porém ela necessita da série histórica de ambos os anos, o que não ocorre no repositório pois o arquivo tem tamanho considerável.
+Caso os arquivos .csv sejam deletados, para gerá-los novamente, basta executar a função **writeFiles** uma vez. Porém ela necessita da série histórica de ambos os anos, o que não ocorre no repositório pois o arquivo tem tamanho considerável.
 
+Para finalizar a aplicação, é necessário usar o comando **Ctrl+C** duas vezes, pois uma encerra o dash e a outra o restante da aplicação.

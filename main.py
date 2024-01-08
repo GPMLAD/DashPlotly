@@ -1,13 +1,13 @@
 from scripts.data_manipulation import merge_files, update_file
 from scripts.web_scraping import news_scrapper, stocks_scrapper
-from scripts.dashboard import draw
+from scripts.dashboard import create_dash_app
 import schedule
 import time
-import threading
 import pandas as pd
+import threading
 
-df = None
-news = None
+df = pd.DataFrame()
+news = []
 
 def job():
     global df
@@ -16,16 +16,17 @@ def job():
     new_data = stocks_scrapper()
     update_file(new_data)
     merge_files()
-    df = pd.read_csv('data/merged_data.csv') 
+    df = pd.read_csv('data/merged_data.csv')
     print("Data updated.")
 
-def run_dash():
+def run_dash(environ, start_response):
     global df
     merge_files()
     news = news_scrapper()
     df = pd.read_csv('data/merged_data.csv')
-    draw(news,df)
-
+    
+    app = create_dash_app(news, df)
+    app.run_server(debug=False)
 
     while True:
         schedule.run_pending()
@@ -37,10 +38,10 @@ def update_dataframe():
     print("DataFrame updated.")
 
 if __name__ == "__main__":
+    schedule.every(15).seconds.do(job)
+
     dash_thread = threading.Thread(target=run_dash)
     dash_thread.start()
-
-    schedule.every(15).seconds.do(job)
 
     while True:
         schedule.run_pending()
