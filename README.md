@@ -37,4 +37,7 @@ As cotações são coletadas de [InfoMoney](https://www.infomoney.com.br) utiliz
 
 Vale lembrar que a InfoMoney disponibiliza publicamente os dados das cotação com um atraso de 15 minutos.
 
+### Observações
+
+Caso os arquivos .csv sejam deletados, para gerá-los novamente, basta executar a função __writeFiles__ uma vez. Porém ela necessita da série histórica de ambos os anos, o que não ocorre no repositório pois o arquivo tem tamanho considerável.
 
