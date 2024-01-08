@@ -44,19 +44,14 @@ def update_file(data_dict):
     for ticker, values in data_dict.items():
         file_path = os.path.join(data_folder, f'{ticker}.csv')
 
-        # Verificar se o arquivo já existe
         if os.path.exists(file_path):
-            # Ler o arquivo existente
             existing_data = pd.read_csv(file_path)
 
-            # Adicionar as novas linhas ao DataFrame existente
             new_data = pd.DataFrame(values, columns=['ticker', 'date', 'open', 'high', 'low', 'close'])
             existing_data = pd.concat([existing_data, new_data], ignore_index=True)
 
-            # Salvar o DataFrame atualizado de volta ao arquivo CSV
             existing_data.to_csv(file_path, index=False)
         else:
-            # Se o arquivo não existir, criar um novo DataFrame e salvar no arquivo
             new_data = pd.DataFrame(values, columns=['ticker', 'date', 'open', 'high', 'low', 'close'])
             new_data.to_csv(file_path, index=False)
 
@@ -72,5 +67,4 @@ def merge_files():
             df = pd.read_csv(filepath)
             merged_data = pd.concat([merged_data, df], ignore_index=True)
 
-    # Salvar o arquivo combinado
     merged_data.to_csv(output_file, index=False)

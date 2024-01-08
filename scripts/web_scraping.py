@@ -75,5 +75,3 @@ def stocks_scrapper():
             print(f'Falha na solicitação para {ticker}. Código de status: {response.status_code}')
 
     return companies_data
-
-print(stocks_scrapper())
