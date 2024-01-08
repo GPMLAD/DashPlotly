@@ -15,10 +15,10 @@ def writeFiles():
     tickers = ["PETR4 ", "CEAB3 ", "WEGE3 "]
 
     for file in data_files:
-        caminho_arquivo = os.path.join('data', file)
+        file_path = os.path.join('data', file)
 
-        with open(caminho_arquivo, 'r') as arquivo:
-            lines = arquivo.readlines()
+        with open(file_path, 'r') as old_file:
+            lines = old_file.readlines()
 
             for ticker in tickers:
                 file_name = os.path.join('data', f'{ticker[0:5]}.csv')
@@ -29,13 +29,13 @@ def writeFiles():
                     if line[12:18] == ticker:
                         scrap_line_data(line, data, ticker[0:5])
 
-                with open(file_name, 'a', newline='') as arquivo_csv:
-                    escritor_csv = csv.writer(arquivo_csv)
+                with open(file_name, 'a', newline='') as new_file:
+                    writer = csv.writer(new_file)
 
                     if not file_exists:
-                        escritor_csv.writerow(['ticker', 'date', 'open', 'high', 'low', 'close'])
+                        writer.writerow(['ticker', 'date', 'open', 'high', 'low', 'close'])
 
-                    escritor_csv.writerows(data)
+                    writer.writerows(data)
 
 
 def update_file(data_dict):
