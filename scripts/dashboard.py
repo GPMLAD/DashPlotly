@@ -4,11 +4,11 @@ import dash
 from dash import dcc, html
 import plotly.graph_objects as go
 
-def draw(news):
+def draw(news, dataframe):
     merged_file_path = os.path.join('data', 'merged_data.csv')
 
     if os.path.exists(merged_file_path):
-        df = pd.read_csv(merged_file_path)
+        df = dataframe
         tickers = df['ticker'].unique()
         app = dash.Dash(__name__, external_stylesheets=['assets/style.css'])
         my_options = [
@@ -48,9 +48,13 @@ def draw(news):
              dash.Output('news-list', 'children')],
             [dash.Input('ticker-dropdown', 'value')]
         )
-        
+
         def update_chart(selected_ticker):
             filtered_df = df[df['ticker'] == selected_ticker]
+
+            last_365_days = pd.to_datetime(filtered_df['date']).max() - pd.DateOffset(days=365)
+            filtered_df = filtered_df[pd.to_datetime(filtered_df['date']) > last_365_days]
+
             fig = go.Figure(data=[go.Candlestick(x=filtered_df['date'],
                             open=filtered_df['open'], high=filtered_df['high'],
                             low=filtered_df['low'], close=filtered_df['close'])
@@ -79,7 +83,6 @@ def draw(news):
                 news_list.append(news_item)
 
             return fig, news_list
-
         app.run_server(debug=False)
     else:
         print(f'O arquivo combinado "{merged_file_path}" não existe.')
