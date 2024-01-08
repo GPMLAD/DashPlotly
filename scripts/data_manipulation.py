@@ -3,12 +3,12 @@ import csv
 import pandas as pd
 
 def scrap_line_data (line, arr, ticker):
-    data_value = f'{line[2:6]}-{line[6:8]}-{line[8:10]}'
+    date_value = f'{line[2:6]}-{line[6:8]}-{line[8:10]}'
     open_value = float(line[56:69])/100
     high_value = float(line[69:82])/100
     low_value = float(line[82:95])/100
     close_value = float(line[108:121])/100
-    arr.append([ticker,data_value, open_value,high_value,low_value,close_value])
+    arr.append([ticker,date_value, open_value,high_value,low_value,close_value])
 
 def writeFiles():
     data_files = ['COTAHIST_A2023.TXT', 'COTAHIST_A2024.TXT']
@@ -36,6 +36,30 @@ def writeFiles():
                         escritor_csv.writerow(['ticker', 'date', 'open', 'high', 'low', 'close'])
 
                     escritor_csv.writerows(data)
+
+
+def update_file(data_dict):
+    data_folder = 'data'
+    
+    for ticker, values in data_dict.items():
+        file_path = os.path.join(data_folder, f'{ticker}.csv')
+
+        # Verificar se o arquivo já existe
+        if os.path.exists(file_path):
+            # Ler o arquivo existente
+            existing_data = pd.read_csv(file_path)
+
+            # Adicionar as novas linhas ao DataFrame existente
+            new_data = pd.DataFrame(values, columns=['ticker', 'date', 'open', 'high', 'low', 'close'])
+            existing_data = pd.concat([existing_data, new_data], ignore_index=True)
+
+            # Salvar o DataFrame atualizado de volta ao arquivo CSV
+            existing_data.to_csv(file_path, index=False)
+        else:
+            # Se o arquivo não existir, criar um novo DataFrame e salvar no arquivo
+            new_data = pd.DataFrame(values, columns=['ticker', 'date', 'open', 'high', 'low', 'close'])
+            new_data.to_csv(file_path, index=False)
+
 
 def merge_files():
     data_folder = 'data'

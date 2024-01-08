@@ -48,6 +48,7 @@ def draw(news):
              dash.Output('news-list', 'children')],
             [dash.Input('ticker-dropdown', 'value')]
         )
+        
         def update_chart(selected_ticker):
             filtered_df = df[df['ticker'] == selected_ticker]
             fig = go.Figure(data=[go.Candlestick(x=filtered_df['date'],
