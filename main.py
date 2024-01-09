@@ -1,3 +1,5 @@
+# main.py
+
 from scripts.data_manipulation import merge_files, update_file
 from scripts.web_scraping import news_scrapper, stocks_scrapper
 from scripts.dashboard import create_dash_app
@@ -19,7 +21,7 @@ def job():
     df = pd.read_csv('data/merged_data.csv')
     print("Data updated.")
 
-def run_dash(environ, start_response):
+def run_dash():
     global df
     merge_files()
     news = news_scrapper()
@@ -27,11 +29,6 @@ def run_dash(environ, start_response):
     
     app = create_dash_app(news, df)
     app.run_server(debug=False)
-
-    while True:
-        schedule.run_pending()
-        time.sleep(5)
-
 def update_dataframe():
     global df
     df = pd.read_csv('data/merged_data.csv')
